@@ -19,6 +19,8 @@ import java.util.Set;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
@@ -36,15 +38,15 @@ class VisitSDJpaServiceTest {
     void findAll() {
         //given
         Set<Visit> visitSet = new HashSet<>();
+        given(visitRepository.findAll()).willReturn(getVisits());
 
         //when
-        Mockito.when(visitRepository.findAll()).thenReturn(getVisits());
         visitSet = service.findAll();
 
         //then
+        then(visitRepository).should(times(1)).findAll();
         assertNotNull(visitSet);
         assertEquals(2, visitSet.size());
-        verify(visitRepository, times(1)).findAll();
     }
 
     private Set<Visit> getVisits() {
@@ -61,14 +63,14 @@ class VisitSDJpaServiceTest {
     void findById() {
         //given
         Visit visit = new Visit();
-        Mockito.when(visitRepository.findById(1L)).thenReturn(Optional.of(visit));
+        given(visitRepository.findById(1L)).willReturn(Optional.of(visit));
 
         //when
         visit = service.findById(1L);
 
         //then
+        then(visitRepository).should(times(1)).findById(anyLong());
         assertNotNull(visit);
-        Mockito.verify(visitRepository, times(1)).findById(anyLong());
     }
 
     @Test
@@ -76,14 +78,14 @@ class VisitSDJpaServiceTest {
     void save() {
         //given
         Visit visit = new Visit();
-        Mockito.when(visitRepository.save(any(Visit.class))).thenReturn((visit));
+        given(visitRepository.save(any(Visit.class))).willReturn(visit);
 
         //when
         visit = service.save(new Visit());
 
         //then
-        verify(visitRepository, times(1)).save(any(Visit.class));
         assertNotNull(visit);
+        then(visitRepository).should(times(1)).save(any(Visit.class));
     }
 
     @Test
@@ -96,7 +98,7 @@ class VisitSDJpaServiceTest {
         service.delete(visit);
 
         //then
-        verify(visitRepository, times(1)).delete(any(Visit.class));
+        then(visitRepository).should(times(1)).delete(any(Visit.class));
     }
 
     @Test
@@ -106,6 +108,6 @@ class VisitSDJpaServiceTest {
         service.deleteById(1L);
 
         //then
-        verify(visitRepository, times(1)).deleteById(anyLong());
+        then(visitRepository).should(times(1)).deleteById(anyLong());
     }
 }
