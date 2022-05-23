@@ -34,11 +34,14 @@ class VisitSDJpaServiceTest {
     @Test
     @DisplayName("Find all objects")
     void findAll() {
+        //given
         Set<Visit> visitSet = new HashSet<>();
-        Mockito.when(visitRepository.findAll()).thenReturn(getVisits());
 
+        //when
+        Mockito.when(visitRepository.findAll()).thenReturn(getVisits());
         visitSet = service.findAll();
 
+        //then
         assertNotNull(visitSet);
         assertEquals(2, visitSet.size());
         verify(visitRepository, times(1)).findAll();
@@ -56,11 +59,14 @@ class VisitSDJpaServiceTest {
     @Test
     @DisplayName("Find by id")
     void findById() {
+        //given
         Visit visit = new Visit();
         Mockito.when(visitRepository.findById(1L)).thenReturn(Optional.of(visit));
 
+        //when
         visit = service.findById(1L);
 
+        //then
         assertNotNull(visit);
         Mockito.verify(visitRepository, times(1)).findById(anyLong());
     }
@@ -68,10 +74,14 @@ class VisitSDJpaServiceTest {
     @Test
     @DisplayName("Save")
     void save() {
+        //given
         Visit visit = new Visit();
         Mockito.when(visitRepository.save(any(Visit.class))).thenReturn((visit));
 
+        //when
         visit = service.save(new Visit());
+
+        //then
         verify(visitRepository, times(1)).save(any(Visit.class));
         assertNotNull(visit);
     }
@@ -79,15 +89,23 @@ class VisitSDJpaServiceTest {
     @Test
     @DisplayName("Delete by object")
     void delete() {
+        //given
         Visit visit = new Visit();
+
+        //when
         service.delete(visit);
+
+        //then
         verify(visitRepository, times(1)).delete(any(Visit.class));
     }
 
     @Test
     @DisplayName("Delete by id")
     void deleteById() {
+        //when
         service.deleteById(1L);
+
+        //then
         verify(visitRepository, times(1)).deleteById(anyLong());
     }
 }
