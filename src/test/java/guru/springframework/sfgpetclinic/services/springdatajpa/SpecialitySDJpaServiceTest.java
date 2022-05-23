@@ -2,6 +2,7 @@ package guru.springframework.sfgpetclinic.services.springdatajpa;
 
 import guru.springframework.sfgpetclinic.model.Speciality;
 import guru.springframework.sfgpetclinic.repositories.SpecialtyRepository;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -11,6 +12,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.BDDMockito.*;
 import static org.mockito.Mockito.*;
@@ -133,4 +135,45 @@ class SpecialitySDJpaServiceTest {
 
         then(specialtyRepository).should().delete(any());
     }
+
+    @Test
+    void testSaveLambda() {
+        //given
+        final String MATCH_ME = "MATCH_ME";
+        Speciality speciality = new Speciality();
+        speciality.setDescription(MATCH_ME);
+
+        Speciality savedSpecialty = new Speciality();
+        savedSpecialty.setId(1L);
+
+        //need mock to only return on match MATCH_ME string
+        given(specialtyRepository.save(argThat(argument -> argument.getDescription().equals(MATCH_ME)))).willReturn(savedSpecialty);
+
+        //when
+        Speciality returnedSpecialty = service.save(speciality);
+
+        //then
+        assertThat(returnedSpecialty.getId()).isEqualTo(1L);
+    }
+
+//    @Test
+//    //example of not-working test because of arguments not matching inside of the lambda expression
+//    void testSaveLambdaNoMatch() {
+//        //given
+//        final String MATCH_ME = "MATCH_ME";
+//        Speciality speciality = new Speciality();
+//        speciality.setDescription("Not a match");
+//
+//        Speciality savedSpecialty = new Speciality();
+//        savedSpecialty.setId(1L);
+//
+//        //need mock to only return on match MATCH_ME string
+//        given(specialtyRepository.save(argThat(argument -> argument.getDescription().equals(MATCH_ME)))).willReturn(savedSpecialty);
+//
+//        //when
+//        Speciality returnedSpecialty = service.save(speciality);
+//
+//        //then
+//        assertNull(returnedSpecialty);
+//    }
 }
